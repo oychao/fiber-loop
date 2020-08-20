@@ -14,8 +14,8 @@ const genEndpoint = function () {
   };
 };
 
-export const pushTask = function (task) {
-  queue.push(task);
+export const pushFiber = function (fiber) {
+  queue.push(fiber);
 };
 
 export const trigger = function () {
@@ -27,7 +27,7 @@ queue.push(endpoint);
 
 (async function () {
   while (queue.length) {
-    const task = queue.shift();
-    await task();
+    const fiber = queue.shift();
+    await fiber();
   }
 })();

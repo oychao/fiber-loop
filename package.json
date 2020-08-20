@@ -1,6 +1,6 @@
 {
-  "name": "task-loop",
-  "version": "0.0.1-alpha.0",
+  "name": "fiber-loop",
+  "version": "0.0.1-alpha.1",
   "main": "./bin/index.js",
   "typings": "./bin/index.d.ts",
   "author": {
@@ -8,9 +8,9 @@
     "email": "chao@ouyang.io"
   },
   "license": "WTFPL",
-  "repository": "https://github.com/oychao/task-loop",
+  "repository": "https://github.com/oychao/fiber-loop",
   "keywords": [],
-  "description": "Task loop for your business",
+  "description": "Fiber loop for your business",
   "files": [
     "LICENSE.md",
     "README.md",
