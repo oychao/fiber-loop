@@ -1,32 +1,32 @@
 import { expect } from 'chai';
 import 'mocha-sinon';
 
-import { pushTask, trigger } from '../bin';
+import { pushFiber, trigger } from '../bin';
 
 const sleep = time => new Promise(res => setTimeout(res, time));
 
-const genDemoTask = function (id) {
+const genDemoFiber = function (id) {
   return async function () {
     await sleep(1e2);
-    console.info(`task ${id}`);
+    console.info(`fiber ${id}`);
   }
 }
 
-describe('task loop', () => {
+describe('fiber loop', () => {
   beforeEach(function () {
     this.sinon.stub(console, 'info');
   });
 
   it('should run correctly', done => {
     (async function () {
-      pushTask(genDemoTask(1));
-      pushTask(genDemoTask(2));
-      pushTask(genDemoTask(3));
-      pushTask(async function () {
+      pushFiber(genDemoFiber(1));
+      pushFiber(genDemoFiber(2));
+      pushFiber(genDemoFiber(3));
+      pushFiber(async function () {
         expect(console.info.calledThrice).to.be.true;
-        expect(console.info.calledWith('task 1')).to.be.true;
-        expect(console.info.calledWith('task 2')).to.be.true;
-        expect(console.info.calledWith('task 3')).to.be.true;
+        expect(console.info.calledWith('fiber 1')).to.be.true;
+        expect(console.info.calledWith('fiber 2')).to.be.true;
+        expect(console.info.calledWith('fiber 3')).to.be.true;
         done();
       });
       trigger();
