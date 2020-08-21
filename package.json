@@ -1,6 +1,6 @@
 {
   "name": "fiber-loop",
-  "version": "0.0.1-alpha.1",
+  "version": "0.0.1-alpha.2",
   "main": "./bin/index.js",
   "typings": "./bin/index.d.ts",
   "author": {
@@ -14,7 +14,8 @@
   "files": [
     "LICENSE.md",
     "README.md",
-    "bin/"
+    "bin/",
+    "src/"
   ],
   "watch": {
     "build": {
@@ -26,7 +27,7 @@
   },
   "scripts": {
     "build": "npm run build:tsc",
-    "build:tsc": "rm -rf bin && tsc",
+    "build:tsc": "tsc",
     "build:rollup": "rm -rf bin && rollup -c",
     "test": "mocha --require babel-register --require babel-polyfill test/**/*.spec.js",
     "prepare": "npm run build",
