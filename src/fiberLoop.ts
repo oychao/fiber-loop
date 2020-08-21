@@ -1,41 +1,51 @@
-export const queue = [];
+import { AsyncAnyFunction } from './types';
 
-let outerRes: () => void;
-let endpoint: () => Promise<unknown>;
+export class FiberLoop {
+  private queue: Array<AsyncAnyFunction>;
 
-const genEndpoint = function () {
-  const endpointPromise = new Promise(res => {
-    outerRes = function () {
-      endpoint = genEndpoint();
-      queue.push(endpoint);
-      res();
-    };
-  });
+  private outerRes: (value?: unknown) => void;
 
-  return function () {
-    return endpointPromise;
-  };
-};
+  private endpoint: () => Promise<unknown>;
 
-export const trigger = function () {
-  outerRes();
-};
+  constructor() {
+    this.queue = [];
+    this.endpoint = this.genEndpoint();
+    this.queue.push(this.endpoint);
 
-export const pushFiber = function (fiber) {
-  queue.push(fiber);
-};
-
-export const pushAndTrigger = function (fiber) {
-  queue.push(fiber);
-  trigger();
-};
-
-endpoint = genEndpoint();
-queue.push(endpoint);
-
-(async function () {
-  while (queue.length) {
-    const fiber = queue.shift();
-    await fiber();
+    (async () => {
+      while (this.queue.length) {
+        const fiber = this.queue.shift();
+        await fiber();
+      }
+    })();
   }
-})();
+
+  private genEndpoint(): () => Promise<unknown> {
+    const endpointPromise = new Promise(res => {
+      this.outerRes = () => {
+        this.endpoint = this.genEndpoint();
+        this.queue.push(this.endpoint);
+        res();
+      };
+    });
+
+    return async function (): Promise<unknown> {
+      return endpointPromise;
+    };
+  }
+
+  public trigger(): void {
+    this.outerRes();
+  }
+
+  public pushFiber(fiber: AsyncAnyFunction): void {
+    this.queue.push(fiber);
+  }
+
+  public pushAndTrigger(fiber: AsyncAnyFunction): void {
+    this.queue.push(fiber);
+    this.trigger();
+  }
+}
+
+export const loop = new FiberLoop();
