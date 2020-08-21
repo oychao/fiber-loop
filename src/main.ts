@@ -1,25 +1,33 @@
-const queue = [];
+export const queue = [];
 
-let outerRes, endpoint;
+let outerRes: () => void;
+let endpoint: () => Promise<unknown>;
 
 const genEndpoint = function () {
+  const endpointPromise = new Promise(res => {
+    outerRes = function () {
+      endpoint = genEndpoint();
+      queue.push(endpoint);
+      res();
+    };
+  });
+
   return function () {
-    return new Promise(res => {
-      outerRes = function () {
-        endpoint = genEndpoint();
-        queue.push(endpoint);
-        res();
-      };
-    });
+    return endpointPromise;
   };
+};
+
+export const trigger = function () {
+  outerRes();
 };
 
 export const pushFiber = function (fiber) {
   queue.push(fiber);
 };
 
-export const trigger = function () {
-  outerRes();
+export const pushAndTrigger = function (fiber) {
+  queue.push(fiber);
+  trigger();
 };
 
 endpoint = genEndpoint();
