@@ -25,7 +25,7 @@ export class FiberLoop {
       this.outerRes = () => {
         this.endpoint = this.genEndpoint();
         this.queue.push(this.endpoint);
-        res();
+        res(undefined);
       };
     });
 
